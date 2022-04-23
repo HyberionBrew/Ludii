@@ -34,7 +34,7 @@ public class Token
 	private char close = 0;
 
 	/** Arguments for the token. */
-	private final List<Token> arguments = new ArrayList<Token>();
+	private List<Token> arguments = new ArrayList<Token>();
 
 	// Formatting details.
 	// 78 chars should keep descriptions within page margin of Language Reference.
@@ -43,7 +43,32 @@ public class Token
 	private final int TAB_SIZE = 4;
 
 	//-------------------------------------------------------------------------
-
+	public Token() {
+		name = "";
+	}
+	public Token TokenNoChildren() {
+		Token ret = this.clone();
+		ret.dropChildren();
+		return ret;
+	}
+	
+	public void dropChildren() {
+		this.arguments = new ArrayList<Token>();
+	}
+	public Token(String name, String parameterLabel, char open, char close,List<Token> arguments) {
+		this.name = name;
+		this.parameterLabel = parameterLabel;
+		this.open = open;
+		this.close = close;
+		this.arguments = arguments;
+	}
+	public Token clone() {
+		ArrayList<Token> args = new ArrayList<Token>();
+		for (Token ar: arguments) {
+			args.add(ar.clone());
+		}
+		return new Token(this.name, this.parameterLabel, this.open, this.close,args);
+	} 
 	/**
 	 * Constructor. 
 	 * Decomposes a string into a token tree.
@@ -64,6 +89,9 @@ public class Token
 	{
 		return parameterLabel;
 	}
+	public void setParameterLabel(String parameterLabel) {
+		this.parameterLabel = parameterLabel;
+	}
 
 	public char open()
 	{
@@ -77,6 +105,11 @@ public class Token
 
 	public List<Token> arguments()
 	{
+		return Collections.unmodifiableList(arguments);
+	}
+	public List<Token> arguments(boolean modifiable)
+	{	
+		if (modifiable) return arguments;
 		return Collections.unmodifiableList(arguments);
 	}
 	
